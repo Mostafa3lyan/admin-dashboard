@@ -1,3 +1,4 @@
+"use client";
 import { FaRegUser } from "react-icons/fa6";
 import { FiShoppingCart } from "react-icons/fi";
 import { HiOutlineUserGroup } from "react-icons/hi2";
@@ -9,8 +10,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { RootState } from "@/store/store";
+import { useSelector } from "react-redux";
 
 export function SectionCards() {
+  const { allUsers } = useSelector((state: RootState) => state.user);
   return (
     <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
       <Card className="@container/card">
@@ -20,7 +24,7 @@ export function SectionCards() {
         <CardFooter className="flex justify-between gap-1.5 text-sm">
           <FaRegUser size={50} />
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            500
+            {allUsers ? allUsers.length : 0}
           </CardTitle>
         </CardFooter>
       </Card>
