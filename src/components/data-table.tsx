@@ -31,6 +31,7 @@ export interface User {
   name: string;
   email: string;
   phone: string;
+  createdAt: string;
 }
 
 export function DataTable() {
@@ -50,9 +51,7 @@ export function DataTable() {
     row: { original: User },
     _columnId: string,
     filterValue: string
-  ) => {
-    return row.original.name.toLowerCase().includes(filterValue.toLowerCase());
-  };
+  ) => row.original.name.toLowerCase().includes(filterValue.toLowerCase());
 
   const table = useReactTable({
     data: allUsers || [],
@@ -77,34 +76,36 @@ export function DataTable() {
   const filtered = table.getFilteredRowModel().rows.map((row) => row.original);
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
+    <div className="space-y-4 w-full">
+      {/* Filter + Export buttons */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
         <Input
           placeholder="Search by name..."
           value={globalFilter ?? ""}
           onChange={(e) => setGlobalFilter(e.target.value)}
-          className="max-w-sm"
+          className="max-w-sm w-full sm:w-auto"
         />
-        <div className="space-x-2">
-          <button
-            className="px-3 py-1 border rounded cursor-pointer hover:bg-primary hover:text-primary-foreground"
+        <div className="flex flex-wrap gap-2">
+          <Button
+            size="sm"
+            variant="outline"
             onClick={() => exportToXLSX(filtered, "table-data.xlsx")}
-            type="button"
           >
             Export XLSX
-          </button>
-          <button
-            className="px-3 py-1 border rounded cursor-pointer hover:bg-primary hover:text-primary-foreground"
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
             onClick={() => exportToPDF(filtered, "table-data.pdf")}
-            type="button"
           >
             Export PDF
-          </button>
+          </Button>
         </div>
       </div>
 
-      <div className="rounded-md border overflow-hidden">
-        <Table>
+      {/* Table */}
+      <div className="overflow-x-auto w-full rounded-md border">
+        <Table className="w-full min-w-[600px]">
           <TableHeader className="bg-muted sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -176,7 +177,8 @@ export function DataTable() {
         </Table>
       </div>
 
-      <div className="flex items-center justify-center gap-2 py-4">
+      {/* Pagination */}
+      <div className="flex flex-wrap justify-center gap-2 py-4">
         <Button
           variant="outline"
           size="sm"
@@ -189,12 +191,12 @@ export function DataTable() {
         {Array.from({ length: table.getPageCount() }, (_, i) => (
           <Button
             key={i}
+            size="sm"
             variant={
               table.getState().pagination.pageIndex === i
                 ? "default"
                 : "outline"
             }
-            size="sm"
             onClick={() => table.setPageIndex(i)}
           >
             {i + 1}

@@ -1,5 +1,7 @@
 "use client";
+import { RootState } from "@/store/store";
 import React from "react";
+import { useSelector } from "react-redux";
 import {
   LineChart as RechartsLineChart,
   Line,
@@ -10,34 +12,65 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { User } from "../data-table";
+
+interface Visitor {
+  id: string;
+  date: string;
+  count: number;
+}
 
 const LineChart = () => {
-  const data = [
-    { name: "Jan ", users: 4000, vistors: 2400, amt: 2400 },
-    { name: "Feb ", users: 3000, vistors: 1398, amt: 2210 },
-    { name: "Mar ", users: 2000, vistors: 9800, amt: 2290 },
-    { name: "Apr", users: 2780, vistors: 3908, amt: 2000 },
-    { name: "May ", users: 1890, vistors: 4800, amt: 2181 },
-    { name: "Jun ", users: 2390, vistors: 3800, amt: 2500 },
-    { name: "Jul ", users: 3490, vistors: 4300, amt: 2100 },
-    { name: "Aug ", users: 3000, vistors: 1398, amt: 2210 },
-    { name: "Sep", users: 2780, vistors: 3908, amt: 2000 },
-    { name: "Oct ", users: 1890, vistors: 4800, amt: 2181 },
-    { name: "Nov ", users: 2390, vistors: 3800, amt: 2500 },
-    { name: "Dec ", users: 3490, vistors: 4300, amt: 2100 },
+  const { allUsers } = useSelector((state: RootState) => state.user);
+  const { allVistors } = useSelector((state: RootState) => state.vistor);
+
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
   ];
 
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth(); // 0 = Jan, 11 = Dec
+
+  // Only include months up to the current month
+  const data = months.slice(0, currentMonth + 1).map((month, idx) => {
+    // Count users created in this month
+    const usersCount =
+      allUsers?.filter(
+        (u: User) =>
+          new Date(u.createdAt).getFullYear() === currentYear &&
+          new Date(u.createdAt).getMonth() === idx
+      ).length || 0;
+
+    // Sum all visitor counts in this month
+    const totalVisitors =
+      allVistors
+        ?.filter(
+          (v: Visitor) =>
+            new Date(v.date).getFullYear() === currentYear &&
+            new Date(v.date).getMonth() === idx
+        )
+        .reduce((sum, v: Visitor) => sum + (v.count || 0), 0) || 0;
+
+    return { name: month, users: usersCount, vistors: totalVisitors };
+  });
+
   return (
-    <div style={{ width: "100%", height: 400 }}>
-      <ResponsiveContainer>
+    <div className="w-full h-[400px] md:h-[450px] lg:h-[500px]">
+      <ResponsiveContainer width="100%" height="100%">
         <RechartsLineChart
           data={data}
-          margin={{
-            top: 5,
-            right: 20,
-            left: 10,
-            bottom: 5,
-          }}
+          margin={{ top: 20, right: 30, left: 0, bottom: 10 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
@@ -48,9 +81,17 @@ const LineChart = () => {
             type="monotone"
             dataKey="vistors"
             stroke="#8884d8"
+            strokeWidth={2}
             activeDot={{ r: 8 }}
+            name="Visits"
           />
-          <Line type="monotone" dataKey="users" stroke="#82ca9d" />
+          <Line
+            type="monotone"
+            dataKey="users"
+            stroke="#82ca9d"
+            strokeWidth={2}
+            name="Users"
+          />
         </RechartsLineChart>
       </ResponsiveContainer>
     </div>

@@ -2,36 +2,36 @@
 import { createAsyncThunk, createSlice, SerializedError } from "@reduxjs/toolkit";
 
 interface UserState {
-    allUsers: [],
+    allVistors: [],
     isLoading: boolean,
     error: SerializedError | null,
 }
 
 const initialState: UserState = {
-    allUsers: [],
+    allVistors: [],
     isLoading: false,
     error: null,
 };
 
-export const getUsers = createAsyncThunk("userSlice/getUsers", async () => {
-    const res = await fetch("https://68f141e90b966ad50035db41.mockapi.io/api/v1/users")
+export const getVistor = createAsyncThunk("vistorSlice/getVistor", async () => {
+    const res = await fetch("https://68f141e90b966ad50035db41.mockapi.io/api/v1/Vistors")
     const data = await res.json();
     return data
 })
 
-const userSlice = createSlice({
-    name: "userSlice",
+const vistorSlice = createSlice({
+    name: "vistorSlice",
     initialState,
     reducers: {},
     extraReducers: (builder) => {
-        builder.addCase(getUsers.pending, (state) => {
+        builder.addCase(getVistor.pending, (state) => {
             state.isLoading = true;
         });
-        builder.addCase(getUsers.fulfilled, (state, action) => {
+        builder.addCase(getVistor.fulfilled, (state, action) => {
             state.isLoading = false;
-            state.allUsers = action.payload;
+            state.allVistors = action.payload;
         });
-        builder.addCase(getUsers.rejected, (state, action) => {
+        builder.addCase(getVistor.rejected, (state, action) => {
             state.isLoading = false;
             state.error = action.error || "Something went wrong";
         });
@@ -39,4 +39,4 @@ const userSlice = createSlice({
 
 })
 
-export default userSlice.reducer;
+export default vistorSlice.reducer;
