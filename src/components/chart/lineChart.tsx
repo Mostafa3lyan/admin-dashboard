@@ -48,6 +48,7 @@ const LineChart = () => {
     const usersCount =
       allUsers?.filter(
         (u: User) =>
+          u.createdAt && 
           new Date(u.createdAt).getFullYear() === currentYear &&
           new Date(u.createdAt).getMonth() === idx
       ).length || 0;

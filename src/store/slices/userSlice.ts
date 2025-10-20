@@ -14,9 +14,17 @@ const initialState: UserState = {
 };
 
 export const getUsers = createAsyncThunk("userSlice/getUsers", async () => {
-    const res = await fetch("https://68f141e90b966ad50035db41.mockapi.io/api/v1/users")
-    const data = await res.json();
-    return data
+    try {
+        const res = await fetch("https://68f141e90b966ad50035db41.mockapi.io/api/v1/users")
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        const data = await res.json();
+        return data
+    } catch (error) {
+        console.error("Failed to fetch users:", error);
+        throw error;
+    }
 })
 
 const userSlice = createSlice({

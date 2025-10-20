@@ -14,9 +14,17 @@ const initialState: UserState = {
 };
 
 export const getVistor = createAsyncThunk("vistorSlice/getVistor", async () => {
-    const res = await fetch("https://68f141e90b966ad50035db41.mockapi.io/api/v1/Vistors")
-    const data = await res.json();
-    return data
+    try {
+        const res = await fetch("https://68f141e90b966ad50035db41.mockapi.io/api/v1/Vistors")
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        const data = await res.json();
+        return data
+    } catch (error) {
+        console.error("Failed to fetch visitors:", error);
+        throw error;
+    }
 })
 
 const vistorSlice = createSlice({
