@@ -25,6 +25,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { exportToXLSX } from "@/utils/exportXLSX";
 import { exportToPDF } from "@/utils/exportPDF";
+import { Spinner } from "@/components/ui/spinner";
 
 export interface User {
   id: string;
@@ -67,7 +68,11 @@ export function DataTable() {
   });
 
   if (isLoading)
-    return <p className="text-center py-8 text-muted-foreground">Loading...</p>;
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Spinner className="w-10 h-10" />
+      </div>
+    );
   if (error)
     return (
       <p className="text-center py-8 text-red-500">Error: {String(error)}</p>
@@ -87,6 +92,7 @@ export function DataTable() {
         />
         <div className="flex flex-wrap gap-2">
           <Button
+            className="cursor-pointer"
             size="sm"
             variant="outline"
             onClick={() => exportToXLSX(filtered, "table-data.xlsx")}
@@ -94,6 +100,7 @@ export function DataTable() {
             Export XLSX
           </Button>
           <Button
+            className="cursor-pointer"
             size="sm"
             variant="outline"
             onClick={() => exportToPDF(filtered, "table-data.pdf")}
